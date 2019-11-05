@@ -8,16 +8,16 @@ void print();
 void line_1();
 void line_2();
 
+/*Methoden für die Logik*/
+void set_start();
+
 /*Globale Variablen*/
 /*
-0 -> Wasser "    "
-1 -> getroffenes Wasser " () "
-2 -> 2er Schiff
-3 -> 3er Schiff
-4 -> 4er Schiff
-5 -> 5er Schiff
-x -> getroffenes Schiff "  ><  "
-x -> versenktes Schiff "(><)"
+00 -> Wasser "    "
+01 -> getroffenes Wasser " () "
+1x -> Schiff Nr. x "===="
+2x -> gtroffenes Schiff Nr. x " >< " 
+3x -> versenktes Schiff Nr. x "(><)"
 */
 int spieler1[10][10];
 int spieler2[10][10];
