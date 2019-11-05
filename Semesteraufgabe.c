@@ -1,15 +1,15 @@
 #include <stdio.h>
+#include <ctype.h>
 
 /*Methode zum setzen der Startpositionen*/
 void set_start();
+void get_start();
+void get_orientation();
 
 /*Methoden für den graphischen Output*/
 void print();
 void line_1();
 void line_2();
-
-/*Methoden für die Logik*/
-void set_start();
 
 /*Globale Variablen*/
 /*
@@ -31,6 +31,43 @@ int main(void)
 
 void set_start()
 {
+        get_start(5);
+        get_start(4);
+        get_start(4);
+        get_start(3);
+        get_start(3);
+        get_start(2);
+        get_start(2);
+        
+}
+
+void get_start(int length)
+{
+        char input[2];
+        int end = 0;
+        int ic = 0;     /*z.B. 0A*/
+        int ci = 0;     /*z.B. A0*/
+        while (!end) {
+                printf("Please enter the starting field of ship with length '%i': ", length);
+                scanf("%s", input);
+                input[0] = toupper(input[0]);
+                input[1] = toupper(input[1]);
+                ic = (input[0] >= '0' && input[0] <= '9') && (input[1] >= 'A' && input[1] <= 'J');
+                ci = (input[0] >= 'A' && input[0] <= 'J') && (input[1] >= '0' && input[1] <= '9');
+                end = ic || ci;
+                if (ic) {
+                        char temp = input[0];
+                        input[0] = input[1];
+                        input[1] = temp;
+                }
+                if (!end) {
+                        printf("'%s' is no legal input!\n", input);
+                } 
+        }       
+}
+
+void get_orientation(int lngth)
+{
         
 }
 
@@ -41,7 +78,7 @@ void print()
                 printf("%s%c", "    ", i);
         }
         printf("%s\n", "  ");
-        for (i = 1; i <= 10; ++i) {
+        for (i = 0; i < 10; ++i) {
                 line_1();
                 line_2(i);
         }
