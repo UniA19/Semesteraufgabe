@@ -2,7 +2,7 @@
 #include <ctype.h>
 
 /*Methode zum setzen der Startpositionen*/
-void set_start();
+void set_start_values();
 void get_start();
 void get_orientation();
 
@@ -25,23 +25,23 @@ int spieler2[10][10];
 int main(void)
 {
         print();
-        set_start();
+        set_start_values();
         return 0;
 }
 
-void set_start()
+void set_start_values()
 {
-        get_start(5);
-        get_start(4);
-        get_start(4);
-        get_start(3);
-        get_start(3);
-        get_start(2);
-        get_start(2);
+        get_start(5, 0);
+        get_start(4, 1);
+        get_start(4, 2);
+        get_start(3, 3);
+        get_start(3, 4);
+        get_start(2, 5);
+        get_start(2, 6);
         
 }
 
-void get_start(int length)
+void get_start(int length, int number)
 {
         char input[2];
         int end = 0;
@@ -60,15 +60,45 @@ void get_start(int length)
                         input[0] = input[1];
                         input[1] = temp;
                 }
-                if (!end) {
+                if (end) {
+                        char orientation = get_orientation(length);
+                        if (orientation == 'h') {
+                                if (((input[0] - 'A') + length) <= 10) {
+                                        int i;
+                                        for (i = 0; i < length; ++i) {
+                                                spieler1[][] = ;
+                                        }
+                                } else {
+                                        /*Das Schiff pass horizontal nicht in das Feld!*/
+                                }
+                        } else {
+                                if () {
+                                        
+                                } else {
+                                        /*Das Schiff pass vertikal nicht in das Feld!*/
+                                }
+                        }
+                } else {
                         printf("'%s' is no legal input!\n", input);
-                } 
+                }
         }       
 }
 
-void get_orientation(int lngth)
+char get_orientation(int length)
 {
-        
+        char input[1];
+        int end = 0;
+        while (!end) {
+                printf("Please enter the orientation of ship with length '%i'\n 'h' for horizontal or 'v' for vertical: ", length);
+                scanf("%s", input);
+                input[0] = toupper(input[0]);
+                end = (input[0] == 'h') || (input[0] == 'v');
+                if (end) {
+                        return input[0];
+                } else {
+                        printf("'%s' is no legal input!\n", input);
+                }
+        }
 }
 
 void print()
