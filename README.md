@@ -1,2 +1,2 @@
 # Semesteraufgabe
-In dieser Semesteraufgabe wird das Spiel "Schife versenken" in c programmiert.
+In dieser Semesteraufgabe wird das Spiel "Schiffe versenken" in c programmiert.
