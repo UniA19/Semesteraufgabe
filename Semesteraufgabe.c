@@ -20,8 +20,13 @@ void line_2();
 2x -> getroffenes Schiff Nr. x " >< " 
 3x -> versenktes Schiff Nr. x "(><)"
 */
-int spieler1[10][10];
-int spieler2[10][10];
+int height = 10;
+int width = 10;
+
+int spieler1[width][height];
+int spieler2[width][height];
+
+
 
 int main(void)
 {
@@ -34,8 +39,8 @@ void set_start_values()
 {       
         int i;
         int j;
-        for (i = 0; i < 10; ++i) {
-                for (j = 0; j < 10; ++j) {
+        for (i = 0; i < width; ++i) {
+                for (j = 0; j < height; ++j) {
                         spieler1[i][j] = 0;
                         spieler2[i][j] = 0;
                 }
@@ -61,8 +66,8 @@ void get_start(int length, int number)
                 scanf("%s", input);
                 input[0] = toupper(input[0]);
                 input[1] = toupper(input[1]);
-                ic = (input[0] >= '0' && input[0] <= '9') && (input[1] >= 'A' && input[1] <= 'J');
-                ci = (input[0] >= 'A' && input[0] <= 'J') && (input[1] >= '0' && input[1] <= '9');
+                ic = (input[0] - '0' >= 0 && input[0] - '0' <= height) && (input[1] - 'A' >= 0 && input[1] - 'A' <= width);
+                ci = (input[0] - 'A' >= 0 && input[0] - 'A' <= width) && (input[1] - '0' >= 0 && input[1] - '0' <= height);
                 end = ic || ci;
                 if (ic) {
                         char temp = input[0];
@@ -72,20 +77,20 @@ void get_start(int length, int number)
                 if (end) {
                         char orientation = get_orientation(length);
                         if (orientation == 'h') {
-                                if (((input[0] - 'A') + length) <= 10) {
+                                if (((input[0] - 'A') + length) <= width) {
                                         int i;
                                         for (i = 0; i < length; ++i) {
                                                 spieler1[][] = ;
                                         }
                                 } else {
-                                        /*Das Schiff pass horizontal nicht in das Feld!*/
+                                        /*Das Schiff passt horizontal nicht in das Feld!*/
                                         ship_not_fit(length, number);
                                 }
                         } else {
-                                if () {
+                                if (((input[1] - '0') + length) <= height) {
                                         
                                 } else {
-                                        /*Das Schiff pass vertikal nicht in das Feld!*/
+                                        /*Das Schiff passt vertikal nicht in das Feld!*/
                                         ship_not_fit(length, number);
                                 }
                         }
@@ -121,11 +126,11 @@ char get_orientation(int length)
 void print()
 {
         int i;
-        for (i = 'A'; i <= 'J'; ++i) {
+        for (i = 'A'; i <= 'A' + width; ++i) {
                 printf("%s%c", "    ", i);
         }
         printf("%s\n", "  ");
-        for (i = 0; i < 10; ++i) {
+        for (i = 0; i < height; ++i) {
                 line_1();
                 line_2(i);
         }
@@ -136,7 +141,7 @@ void line_1()
 {
         int i;
         printf("%s", "  ");
-        for (i = 'A'; i <= 'J'; ++i) {
+        for (i = 'A'; i <= 'A' + width; ++i) {
                 printf("%s", "+----");
         }
         printf("%c\n", '+');
@@ -146,7 +151,7 @@ void line_2(int row)
 {
         int i;
         printf("%2i", row);
-        for (i = 'A'; i <= 'J'; ++i) {
+        for (i = 'A'; i <= 'A' + width; ++i) {
                 printf("%s", "|    ");
         }
         printf("%c\n", '|');
