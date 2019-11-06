@@ -5,6 +5,7 @@
 void set_start_values();
 void get_start();
 void get_orientation();
+void ship_not_fit();
 
 /*Methoden für den graphischen Output*/
 void print();
@@ -30,7 +31,15 @@ int main(void)
 }
 
 void set_start_values()
-{
+{       
+        int i;
+        int j;
+        for (i = 0; i < 10; ++i) {
+                for (j = 0; j < 10; ++j) {
+                        spieler1[i][j] = 0;
+                        spieler2[i][j] = 0;
+                }
+        }
         get_start(5, 0);
         get_start(4, 1);
         get_start(4, 2);
@@ -70,18 +79,26 @@ void get_start(int length, int number)
                                         }
                                 } else {
                                         /*Das Schiff pass horizontal nicht in das Feld!*/
+                                        ship_not_fit(length, number);
                                 }
                         } else {
                                 if () {
                                         
                                 } else {
                                         /*Das Schiff pass vertikal nicht in das Feld!*/
+                                        ship_not_fit(length, number);
                                 }
                         }
                 } else {
                         printf("'%s' is no legal input!\n", input);
                 }
         }       
+}
+
+void ship_not_fit(int length, int number)
+{
+        printf("%s", "The ship doesn't fit like this");
+        get_start(length, number);
 }
 
 char get_orientation(int length)
