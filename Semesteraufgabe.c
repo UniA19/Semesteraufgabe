@@ -17,7 +17,7 @@ void line_2();
 00 -> Wasser "    "
 01 -> getroffenes Wasser " () "
 1x -> Schiff Nr. x "===="
-2x -> gtroffenes Schiff Nr. x " >< " 
+2x -> getroffenes Schiff Nr. x " >< " 
 3x -> versenktes Schiff Nr. x "(><)"
 */
 int spieler1[10][10];
