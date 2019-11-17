@@ -12,9 +12,15 @@ void print();
 void line_1();
 void line_2();
 
+/*Methoden für den Spielablauf*/
+void shoot();
+
+/*Allgemeine Methoden*/
+void get_field();
+
 /*enums*/
 enum { none, left, horizontal, right, top, vertical, bottom };
-enum { water, hit_water, ship, hit_ship, destroyed_ship};
+enum { water, hit_water, ship, hit_ship, destroyed_ship };
 
 /*structs*/
 struct field {
@@ -25,13 +31,6 @@ struct field {
 };
 
 /*Globale Variablen*/
-/*
-00 -> Wasser "    "
-01 -> getroffenes Wasser " () "
-1x -> Schiff Nr. x "===="
-2x -> getroffenes Schiff Nr. x " >< " 
-3x -> versenktes Schiff Nr. x "(><)"
-*/
 int height = 10;
 int width = 10;
 
@@ -47,6 +46,49 @@ int main(void)
         print();
         set_start_values();
         return 0;
+}
+
+void shoot()
+{
+        
+}
+
+void get_field(char input[])
+{
+        int end = 0;
+        int ic = 0;     /*z.B. 0A*/
+        int ci = 0;     /*z.B. A0*/
+        
+        input[0] = getchar();
+                
+        /*Fehlerbehandlung bei zu kurzem Input*/
+        if (input[0] != '\n') {
+                input[1] = getchar();
+        } else {
+                input[1] = ' ';
+        }
+        
+        /*Überschüssigen input löschen*/
+        if (input[0] != '\n' && input[1] != '\n') {
+                while ((getchar()) != '\n');
+        }
+        
+        input[0] = toupper(input[0]);
+        input[1] = toupper(input[1]);
+        
+        /*Input validieren*/
+        ic = (input[0] - '0' >= 0 && input[0] - '0' < height) && (input[1] - 'A' >= 0 && input[1] - 'A' < width);
+        ci = (input[0] - 'A' >= 0 && input[0] - 'A' < width) && (input[1] - '0' >= 0 && input[1] - '0' < height);
+        end = ic || ci;
+        if (ic) {
+                char temp = input[0];
+                input[0] = input[1];
+                input[1] = temp;
+        }
+        if (!end) {
+                printf("'%c%c' is no legal input!\nPlease try again:\a", input[0], input[1]);
+                get_field(input);
+        }
 }
 
 void set_start_values()
@@ -85,98 +127,66 @@ void set_start_values()
 void get_start(int length, int number)
 {
         char input[2];
-        int end = 0;
-        int ic = 0;     /*z.B. 0A*/
-        int ci = 0;     /*z.B. A0*/
-        while (!end) {
-                printf("Please enter the starting field of ship with length '%i': ", length);
-                input[0] = getchar();
-                
-                /*Fehlerbehandlung bei zu kurzem Input*/
-                if (input[0] != '\n') {
-                        input[1] = getchar();
-                } else {
-                        input[1] = ' ';
-                }
-                
-                /*Überschüssigen input löschen*/
-                if (input[0] != '\n' && input[1] != '\n') {
-                        while ((getchar()) != '\n');
-                }
-                
-                input[0] = toupper(input[0]);
-                input[1] = toupper(input[1]);
-                
-                /*Input validieren*/
-                ic = (input[0] - '0' >= 0 && input[0] - '0' <= height) && (input[1] - 'A' >= 0 && input[1] - 'A' <= width);
-                ci = (input[0] - 'A' >= 0 && input[0] - 'A' <= width) && (input[1] - '0' >= 0 && input[1] - '0' <= height);
-                end = ic || ci;
-                if (ic) {
-                        char temp = input[0];
-                        input[0] = input[1];
-                        input[1] = temp;
-                }
-                if (end) {
-                        char orientation = get_orientation(length);
-                        if (orientation == 'H') {
-                                if (((input[0] - 'A') + length) <= width) {
-                                        int i;
-                                        int not_fit = 0;
-                                        for (i = 0; i < length; ++i) {
-                                                not_fit += spieler1[input[0] - 'A' + i][input[1] - '0'].content; /*nicht alle Felder sind frei*/
+        char orientation;
+        printf("Please enter the starting field of ship with length '%i': ", length);
+        get_field(input);
+        
+        orientation = get_orientation(length);
+        if (orientation == 'H') {
+                if (((input[0] - 'A') + length) <= width) {
+                        int i;
+                        int not_fit = 0;
+                        for (i = 0; i < length; ++i) {
+                                not_fit += spieler1[input[0] - 'A' + i][input[1] - '0'].content; /*nicht alle Felder sind frei*/
+                        }
+                        if (not_fit) {
+                                ship_not_fit(length, number);
+                        } else { /*Legaler input*/
+                                for (i = 0; i < length; ++i) {
+                                        spieler1[input[0] - 'A' + i][input[1] - '0'].content = ship;
+                                        spieler1[input[0] - 'A' + i][input[1] - '0'].length = length;
+                                        spieler1[input[0] - 'A' + i][input[1] - '0'].number = number;
+                                        if (i == 0) {
+                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = left;
+                                        } else if (i == length - 1) {
+                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = right;
+                                        } else {
+                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = horizontal;
                                         }
-                                        if (not_fit) {
-                                                ship_not_fit(length, number);
-                                        } else { /*Legaler input*/
-                                                for (i = 0; i < length; ++i) {
-                                                        spieler1[input[0] - 'A' + i][input[1] - '0'].content = ship;
-                                                        spieler1[input[0] - 'A' + i][input[1] - '0'].length = length;
-                                                        spieler1[input[0] - 'A' + i][input[1] - '0'].number = number;
-                                                        if (i == 0) {
-                                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = left;
-                                                        } else if (i == length - 1) {
-                                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = right;
-                                                        } else {
-                                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = horizontal;
-                                                        }
-                                                }
-                                        }
-                                } else {
-                                        /*Das Schiff passt horizontal nicht in das Feld!*/
-                                        ship_not_fit(length, number);
-                                }
-                        } else {
-                                if (((input[1] - '0') + length) <= height) {
-                                        int i;
-                                        int not_fit = 0;
-                                        for (i = 0; i < length; ++i) {
-                                                not_fit += spieler1[input[0] - 'A'][input[1] - '0' + i].content; /*nicht alle Felder sind frei*/
-                                        }
-                                        if (not_fit) {
-                                                ship_not_fit(length, number);
-                                        } else { /*Legaler input*/
-                                                for (i = 0; i < length; ++i) {
-                                                        spieler1[input[0] - 'A'][input[1] - '0' + i].content = ship;
-                                                        spieler1[input[0] - 'A'][input[1] - '0' + i].length = length;
-                                                        spieler1[input[0] - 'A'][input[1] - '0' + i].number = number;
-                                                        if (i == 0) {
-                                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = top;
-                                                        } else if (i == length - 1) {
-                                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = bottom;
-                                                        } else {
-                                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = vertical;
-                                                        }
-                                                }
-                                        }
-                                } else {
-                                        /*Das Schiff passt vertikal nicht in das Feld!*/
-                                        ship_not_fit(length, number);
                                 }
                         }
                 } else {
-                        printf("'%c%c' is no legal input!\n\a", input[0], input[1]);
+                        /*Das Schiff passt horizontal nicht in das Feld!*/
+                        ship_not_fit(length, number);
                 }
-        }       
+        } else {
+                if (((input[1] - '0') + length) <= height) {
+                        int i;
+                        int not_fit = 0;
+                        for (i = 0; i < length; ++i) {
+                                not_fit += spieler1[input[0] - 'A'][input[1] - '0' + i].content; /*nicht alle Felder sind frei*/
+                        }
+                        if (not_fit) {
+                                ship_not_fit(length, number);
+                        } else { /*Legaler input*/
+                                for (i = 0; i < length; ++i) {
+                                        spieler1[input[0] - 'A'][input[1] - '0' + i].content = ship;
+                                        spieler1[input[0] - 'A'][input[1] - '0' + i].length = length;
+                                        spieler1[input[0] - 'A'][input[1] - '0' + i].number = number;
+                                        if (i == 0) {
+                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = top;
+                                        } else if (i == length - 1) {
+                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = bottom;
+                                        } else {
+                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = vertical;
+                                        }
+                                }
+                        }
+                } else {
+                        /*Das Schiff passt vertikal nicht in das Feld!*/
+                        ship_not_fit(length, number);
+                }
+        }
 }
 
 void ship_not_fit(int length, int number)
@@ -209,6 +219,7 @@ char get_orientation(int length)
 void print()
 {
         int i;
+        printf("\n");
         for (i = 'A'; i < 'A' + width; ++i) {
                 printf("%s%c", "    ", i);
         }
