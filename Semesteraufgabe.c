@@ -14,16 +14,17 @@ void line_2();
 
 /*Methoden für den Spielablauf*/
 void shoot();
+int get_status();
 
 /*Allgemeine Methoden*/
 void get_field();
 
 /*enums*/
-enum { none, left, horizontal, right, top, vertical, bottom };
 enum { water, hit_water, ship, hit_ship, destroyed_ship };
+enum { none, left, horizontal, right, top, vertical, bottom };
 
 /*structs*/
-struct field {
+struct Field {
         short content;
         short length; /*0 if no ship*/
         short number; /*0 if no ship*/
@@ -34,8 +35,8 @@ struct field {
 int height = 10;
 int width = 10;
 
-struct field spieler1[10][10];
-struct field spieler2[10][10];
+struct Field spieler1[10][10];
+struct Field spieler2[10][10];
 
 
 
@@ -45,12 +46,97 @@ int main(void)
 {
         print();
         set_start_values();
+        do {
+                shoot();
+        } while (get_status());
+        
+        printf("\n----------------------------------------\n");
+        printf("The game is over! Someone won!\n");
+        printf("----------------------------------------\n\n");
+        
         return 0;
 }
 
 void shoot()
 {
+        char field[2];
+        printf("Choose a field to shoot at: ");
+        get_field(field);
         
+        switch (spieler1[field[0] - 'A'][field[1] - '0'].content) { /*MUST BE spieler2 JUST FOR TESTING!!!!!!!!!!!!!*/
+                case water:
+                        printf("Oh no, you missed!\n");
+                        spieler1[field[0] - 'A'][field[1] - '0'].content = hit_water;
+                        print();
+                        break;
+                case hit_water:
+                        printf("You have already tried to kill that water!\n");
+                        shoot();
+                        break;
+                case ship:
+                        printf("Yeah, you have hit a ship!\n");
+                        spieler1[field[0] - 'A'][field[1] - '0'].content = hit_ship;
+                        if (!get_status()) {
+                                print();
+                                return;
+                        }
+                        print();
+                        shoot();
+                        break;
+                case hit_ship:
+                        printf("You have already destroyed this Part of the ship!\n");
+                        shoot();
+                        break;
+                case destroyed_ship:
+                        printf("You have already destroyed this ship!\n");
+                        shoot();
+                        break;
+                default:
+                        printf("Oh, it seems that aliens have claimed this field. I think this is an ERROR"); /*Should never be reached!*/
+        }
+}
+
+int get_status() /*Return 0 to end game*/
+{
+        int status = 0;
+        int i;
+        for (i = 0; i < width; ++i) {
+                int j;
+                for (j = 0; j < height; ++j) {
+                        struct Field field = spieler1[i][j];
+                        status += field.content == ship;
+                        if (field.position == left) {
+                                if (field.content == hit_ship) {
+                                        int k;
+                                        int ship_ok = 0; /*Anzahl an noch nicht getroffenen Teilen dieses Schiffes*/
+                                        for (k = 0; k < field.length; ++k) {
+                                                ship_ok += spieler1[i+k][j].content == ship;
+                                        }
+                                        if (!ship_ok) { /*Schiff versenkt*/
+                                                for (k = 0; k < field.length; ++k) {
+                                                        spieler1[i+k][j].content = destroyed_ship;
+                                                }
+                                                printf("You have destroyed a ship with length %i!", field.length);
+                                        }
+                                }
+                        } else if (field.position == top) {
+                                if (field.content == hit_ship) {
+                                        int k;
+                                        int ship_ok = 0; /*Anzahl an noch nicht getroffenen Teilen dieses Schiffes*/
+                                        for (k = 0; k < field.length; ++k) {
+                                                ship_ok += spieler1[i][j+k].content == ship;
+                                        }
+                                        if (!ship_ok) { /*Schiff versenkt*/
+                                                for (k = 0; k < field.length; ++k) {
+                                                        spieler1[i][j+k].content = destroyed_ship;
+                                                }
+                                                printf("You have destroyed a ship with length %i!", field.length);
+                                        }
+                                }
+                        }
+                }
+        }
+        return status;
 }
 
 void get_field(char input[])
@@ -68,7 +154,7 @@ void get_field(char input[])
                 input[1] = ' ';
         }
         
-        /*Überschüssigen input löschen*/
+        /*Überschüssigen Input löschen*/
         if (input[0] != '\n' && input[1] != '\n') {
                 while ((getchar()) != '\n');
         }
@@ -247,60 +333,86 @@ void line_2(int row)
         printf("%2i", row);
         for (i = 0; i < width; ++i) {
                 switch (spieler1[i][row].content) {
-                case water:
-                        printf("%s", "|    "); break;
-                case hit_water:
-                        printf("%s", "| () "); break;
-                case ship:
-                        switch (spieler1[i][row].position) {
-                        case left:
-                                printf("%s", "| <= "); break;
-                        case horizontal:
-                                printf("%s", "| == "); break;
-                        case right:
-                                printf("%s", "| => "); break;
-                        case top:
-                                printf("%s", "| /\\ "); break;
-                        case vertical:
-                                printf("%s", "| || "); break;
-                        case bottom:
-                                printf("%s", "| \\/ "); break;
-                        }
-                        break;
-                case hit_ship:
-                        switch (spieler1[i][row].position) {
-                        case left:
-                                printf("%s", "|#<=#"); break;
-                        case horizontal:
-                                printf("%s", "|#==#"); break;
-                        case right:
-                                printf("%s", "|#=>#"); break;
-                        case top:
-                                printf("%s", "|#/\\#"); break;
-                        case vertical:
-                                printf("%s", "|#||#"); break;
-                        case bottom:
-                                printf("%s", "|#\\/#"); break;
-                        }
-                        break;
-                case destroyed_ship:
-                        switch (spieler1[i][row].position) {
-                        case left:
-                                printf("%s", "|<***"); break;
-                        case horizontal:
-                                printf("%s", "|****"); break;
-                        case right:
-                                printf("%s", "|***>"); break;
-                        case top:
-                                printf("%s", "|*/\\*"); break;
-                        case vertical:
-                                printf("%s", "||**|"); break;
-                        case bottom:
-                                printf("%s", "|*\\/*"); break;
-                        }
-                        break;
-                default:
-                        printf("%s", "| ERR"); /*Should never be reached*/
+                        case water:
+                                printf("%s", "|    ");
+                                break;
+                        case hit_water:
+                                printf("%s", "| () ");
+                                break;
+                        case ship:
+                                switch (spieler1[i][row].position) {
+                                        case left:
+                                                printf("%s", "| <= ");
+                                                break;
+                                        case horizontal:
+                                                printf("%s", "| == ");
+                                                break;
+                                        case right:
+                                                printf("%s", "| => ");
+                                                break;
+                                        case top:
+                                                printf("%s", "| /\\ ");
+                                                break;
+                                        case vertical:
+                                                printf("%s", "| || ");
+                                                break;
+                                        case bottom:
+                                                printf("%s", "| \\/ ");
+                                                break;
+                                        default:
+                                                printf("%s", "| ERR"); /*Should never be reached*/
+                                }
+                                break;
+                        case hit_ship:
+                                switch (spieler1[i][row].position) {
+                                        case left:
+                                                printf("%s", "|#<=#");
+                                                break;
+                                        case horizontal:
+                                                printf("%s", "|#==#");
+                                                break;
+                                        case right:
+                                                printf("%s", "|#=>#");
+                                                break;
+                                        case top:
+                                                printf("%s", "|#/\\#");
+                                                break;
+                                        case vertical:
+                                                printf("%s", "|#||#");
+                                                break;
+                                        case bottom:
+                                                printf("%s", "|#\\/#");
+                                                break;
+                                        default:
+                                                printf("%s", "| ERR"); /*Should never be reached*/
+                                }
+                                break;
+                        case destroyed_ship:
+                                switch (spieler1[i][row].position) {
+                                        case left:
+                                                printf("%s", "|<***");
+                                                break;
+                                        case horizontal:
+                                                printf("%s", "|****");
+                                                break;
+                                        case right:
+                                                printf("%s", "|***>");
+                                                break;
+                                        case top:
+                                                printf("%s", "|*/\\*");
+                                                break;
+                                        case vertical:
+                                                printf("%s", "|*||*");
+                                                break;
+                                        case bottom:
+                                                printf("%s", "|*\\/*");
+                                                break;
+                                        default:
+                                                printf("%s", "| ERR"); /*Should never be reached*/
+                                }
+                                break;
+                        default:
+                                printf("%s", "| ERR"); /*Should never be reached*/
                 }
         }
         printf("%c\n", '|');
