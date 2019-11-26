@@ -195,19 +195,19 @@ void set_start_values()
                         spieler1[i][j].position = none;
                 }
         }
-        get_start(5, 0);
-        print();
-        get_start(4, 1);
+        get_start(5, 1);
         print();
         get_start(4, 2);
         print();
-        get_start(3, 3);
+        get_start(4, 3);
         print();
         get_start(3, 4);
         print();
-        get_start(2, 5);
+        get_start(3, 5);
         print();
         get_start(2, 6);
+        print();
+        get_start(2, 7);
         print();
 }
 
