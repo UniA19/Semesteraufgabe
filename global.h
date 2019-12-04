@@ -20,5 +20,4 @@ int width;
 struct Field spieler1[10][10];
 struct Field spieler2[10][10];
 
-
 #endif
