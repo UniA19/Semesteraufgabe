@@ -49,12 +49,13 @@ void set_start_values()
                         spieler1[i][j].number = 0;
                         spieler1[i][j].position = none;
                         
-                        spieler1[i][j].content = water;
-                        spieler1[i][j].length = 0;
-                        spieler1[i][j].number = 0;
-                        spieler1[i][j].position = none;
+                        spieler2[i][j].content = water;
+                        spieler2[i][j].length = 0;
+                        spieler2[i][j].number = 0;
+                        spieler2[i][j].position = none;
                 }
         }
+        print();
         get_start(5, 1);
         print();
         get_start(4, 2);

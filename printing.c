@@ -3,8 +3,8 @@
 
 #define SPACE_BETWEEN "            "
 
-extern struct Field spieler1[10][10];
-extern struct Field spieler2[10][10];
+extern struct Field **spieler1;
+extern struct Field **spieler2;
 
 void print()
 {

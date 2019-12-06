@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 
 
 /*Methoden für den Spielablauf*/
@@ -14,10 +15,30 @@ int get_status();
 /*---------------------------------------- Methoden ----------------------------------------*/
 int main(void)
 {
-        height = 10;
+        int i;
+        
         width = 10;
-        print();
+        height = 10;
+        
+        spieler1 = (struct Field **)malloc(width * sizeof(struct Field *));
+        for (i = 0; i < width; ++i) {
+                spieler1[i] = (struct Field *) malloc(height * sizeof(struct Field));
+                if (spieler1[i] == NULL) {
+                        printf("FATAL ERROR: could not allocate memory");
+                        return -1;
+                }
+        }
+        
+        spieler2 = (struct Field **)malloc(width * sizeof(struct Field *));
+        for (i = 0; i < width; ++i) {
+                spieler2[i] = (struct Field *) malloc(height * sizeof(struct Field));
+                if (spieler2[i] == NULL) {
+                        printf("FATAL ERROR: could not allocate memory");
+                        return -1;
+                }
+        }
         set_start_values();
+        
         do {
                 shoot();
         } while (get_status());

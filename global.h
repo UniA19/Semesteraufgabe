@@ -17,7 +17,7 @@ enum { none, left, horizontal, right, top, vertical, bottom };
 int height;
 int width;
 
-struct Field spieler1[10][10];
-struct Field spieler2[10][10];
+struct Field **spieler1;
+struct Field **spieler2;
 
 #endif
