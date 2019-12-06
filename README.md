@@ -12,3 +12,5 @@ gcc printing.o input.o Semesteraufgabe.c -o Semesteraufgabe -ansi -pedantic -Wal
 Test with:
 
 type test.txt | ./Semesteraufgabe
+
+type test_big.txt | ./Semesteraufgabe
