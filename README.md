@@ -1,6 +1,6 @@
 # Semesteraufgabe
-## In dieser Semesteraufgabe wird das Spiel "Schiffe versenken" in c programmiert.
-
+### In dieser Semesteraufgabe wird das Spiel "Schiffe versenken" in c programmiert.
+---
 ### Compile with:
 
 gcc -c printing.c -o printing.o -ansi -pedantic -Wall -Wextra
