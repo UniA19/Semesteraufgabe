@@ -13,6 +13,8 @@ char get_orientation();
 void ship_not_fit();
 
 /*Allgemeine Methoden*/
-void get_field();
+void get_size();
+int get_field(int *row, char *column);
+int flush();
 
 #endif

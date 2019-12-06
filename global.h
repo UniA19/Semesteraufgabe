@@ -1,6 +1,13 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#define WIDTH_MIN 3
+#define WIDTH_MAX 26
+#define WIDTH_DEFAULT 10
+#define HEIGHT_MIN 3
+#define HEIGHT_MAX 99
+#define HEIGHT_DEFAULT 10
+
 /*structs*/
 struct Field {
         short content;

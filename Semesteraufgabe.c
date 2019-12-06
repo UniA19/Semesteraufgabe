@@ -17,8 +17,9 @@ int main(void)
 {
         int i;
         
-        width = 10;
-        height = 10;
+        width = WIDTH_DEFAULT;
+        height = HEIGHT_DEFAULT;
+        get_size();
         
         spieler1 = (struct Field **)malloc(width * sizeof(struct Field *));
         for (i = 0; i < width; ++i) {
@@ -52,14 +53,15 @@ int main(void)
 
 void shoot()
 {
-        char field[2];
+        int row;
+        char column;
         printf("Choose a field to shoot at: ");
-        get_field(field);
+        get_field(&row, &column);
         
-        switch (spieler2[field[0] - 'A'][field[1] - '0'].content) {
+        switch (spieler2[column - 'A'][row].content) {
                 case water:
                         printf("\n%s\n", "Oh no, you missed!");
-                        spieler2[field[0] - 'A'][field[1] - '0'].content = hit_water;
+                        spieler2[column - 'A'][row].content = hit_water;
                         print();
                         break;
                 case hit_water:
@@ -68,7 +70,7 @@ void shoot()
                         break;
                 case ship:
                         printf("%s\n", "Yeah, you have hit a ship!");
-                        spieler2[field[0] - 'A'][field[1] - '0'].content = hit_ship;
+                        spieler2[column - 'A'][row].content = hit_ship;
                         if (!get_status()) {
                                 print();
                                 return;

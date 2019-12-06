@@ -1,41 +1,117 @@
 #include "input.h"
 
-void get_field(char input[])
+void get_size() 
+{
+        int right = 0;
+        int temp = 0;
+        printf("Please enter the width of the field (between %i and %i): ", WIDTH_MIN, WIDTH_MAX);
+        while (!right) {
+                scanf("%i", &temp);
+                if (temp < WIDTH_MIN) {
+                        right = 0;
+                        printf("The width must be between %i and %i!\nPlease try again: ", WIDTH_MIN, WIDTH_MAX);
+                } else if (WIDTH_MIN <= temp && temp <= WIDTH_MAX) {
+                        right = 1;
+                } else if (WIDTH_MAX < temp) {
+                        right = 0;
+                        printf("The width must be between %i and %i!\nPlease try again: ", WIDTH_MIN, WIDTH_MAX);
+                }
+        }
+        width = temp;
+        if (flush()) {
+                return;
+        }
+        
+        temp = 0;
+        right = 0;
+        printf("Please enter the height of the field (between %i and %i): ", HEIGHT_MIN, HEIGHT_MAX);
+        while (!right) {
+                scanf("%i", &temp);
+                if (temp < HEIGHT_MIN) {
+                        right = 0;
+                        printf("The height must be between %i and %i!\nPlease try again: ", HEIGHT_MIN, HEIGHT_MAX);
+                } else if (HEIGHT_MIN <= temp && temp <= HEIGHT_MAX) {
+                        right = 1;
+                } else if (HEIGHT_MAX < temp) {
+                        right = 0;
+                        printf("The height must be between %i and %i!\nPlease try again: ", HEIGHT_MIN, HEIGHT_MAX);
+                }
+        }
+        height = temp;
+        if (flush()) {
+                return;
+        }
+}
+
+int get_field(int *row, char *column)
 {
         int end = 0;
         int ic = 0;     /*z.B. 0A*/
         int ci = 0;     /*z.B. A0*/
+        
+        char input[3];
         
         input[0] = getchar();
                 
         /*Fehlerbehandlung bei zu kurzem Input*/
         if (input[0] != '\n') {
                 input[1] = getchar();
+                if (input[1] != '\n') {
+                        input[2] = getchar();
+                } else {
+                        input[2] = ' ';
+                }
         } else {
                 input[1] = ' ';
         }
         
         /*Überschüssigen Input löschen*/
-        if (input[0] != '\n' && input[1] != '\n') {
-                while ((getchar()) != '\n');
+        if (input[0] != '\n' && input[1] != '\n' && input[2] != '\n') {
+                if (flush()) {
+                        return -1;
+                }
+        }
+        
+        /*Hinzufügen der 0 bei Zahlen < 10 (A3 -> A03 bzw. 3A -> 03A)*/
+        if (input[2] == '\n') {
+                if (input[0] >= '0' && input[0] <= '9') {
+                        input[2] = input[1];
+                        input[1] = input[0];
+                        input[0] = '0';
+                } else {
+                        input[2] = input[1];
+                        input[1] = '0';
+                }
         }
         
         input[0] = toupper(input[0]);
         input[1] = toupper(input[1]);
+        input[2] = toupper(input[2]);
         
         /*Input validieren*/
-        ic = (input[0] - '0' >= 0 && input[0] - '0' < height) && (input[1] - 'A' >= 0 && input[1] - 'A' < width);
-        ci = (input[0] - 'A' >= 0 && input[0] - 'A' < width) && (input[1] - '0' >= 0 && input[1] - '0' < height);
-        end = ic || ci;
+        ic = (input[0] >= '0' && input[0] <= '9') && (input[1] >= '0' && input[1] <= '9') && (input[2] >= 'A' && input[2] <= 'Z');
+        ci = (input[0] >= 'A' && input[0] <= 'Z') && (input[1] >= '0' && input[1] <= '9') && (input[2] >= '0' && input[2] <= '9');
+        
         if (ic) {
                 char temp = input[0];
-                input[0] = input[1];
+                input[0] = input[2];
+                input[2] = input[1];
                 input[1] = temp;
         }
+        
+        /*Input umrechnen*/
+        *column = input[0];
+        *row = ((input[1] - '0') * 10) + (input[2] - '0');
+        
+        end = *column - 'A' < width && *column - 'A' >= 0 && *row < height && *row >= 0;
+        
+        end = end && (ic || ci);
+        
         if (!end) {
-                printf("'%c%c' is no legal input!\nPlease try again:\a", input[0], input[1]);
-                get_field(input);
+                printf("'%c%c%c' is no legal input!\nPlease try again:\a", input[0], input[1], input[2]);
+                get_field(row, column);
         }
+        return 0;
 }
 
 void set_start_values()
@@ -74,32 +150,33 @@ void set_start_values()
 
 void get_start(int length, int number)
 {
-        char input[2];
+        int row;
+        char column;
         char orientation;
         printf("Please enter the starting field of ship with length '%i': ", length);
-        get_field(input);
+        get_field(&row, &column);
         
         orientation = get_orientation(length);
         if (orientation == 'H') {
-                if (((input[0] - 'A') + length) <= width) {
+                if (((column - 'A') + length) <= width) {
                         int i;
                         int not_fit = 0;
                         for (i = 0; i < length; ++i) {
-                                not_fit += spieler1[input[0] - 'A' + i][input[1] - '0'].content; /*nicht alle Felder sind frei*/
+                                not_fit += spieler1[column - 'A' + i][row].content; /*nicht alle Felder sind frei*/
                         }
                         if (not_fit) {
                                 ship_not_fit(length, number);
                         } else { /*Legaler input*/
                                 for (i = 0; i < length; ++i) {
-                                        spieler1[input[0] - 'A' + i][input[1] - '0'].content = ship;
-                                        spieler1[input[0] - 'A' + i][input[1] - '0'].length = length;
-                                        spieler1[input[0] - 'A' + i][input[1] - '0'].number = number;
+                                        spieler1[column - 'A' + i][row].content = ship;
+                                        spieler1[column - 'A' + i][row].length = length;
+                                        spieler1[column - 'A' + i][row].number = number;
                                         if (i == 0) {
-                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = left;
+                                                spieler1[column - 'A' + i][row].position = left;
                                         } else if (i == length - 1) {
-                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = right;
+                                                spieler1[column - 'A' + i][row].position = right;
                                         } else {
-                                                spieler1[input[0] - 'A' + i][input[1] - '0'].position = horizontal;
+                                                spieler1[column - 'A' + i][row].position = horizontal;
                                         }
                                 }
                         }
@@ -108,25 +185,25 @@ void get_start(int length, int number)
                         ship_not_fit(length, number);
                 }
         } else {
-                if (((input[1] - '0') + length) <= height) {
+                if (((row) + length) <= height) {
                         int i;
                         int not_fit = 0;
                         for (i = 0; i < length; ++i) {
-                                not_fit += spieler1[input[0] - 'A'][input[1] - '0' + i].content; /*nicht alle Felder sind frei*/
+                                not_fit += spieler1[column - 'A'][row + i].content; /*nicht alle Felder sind frei*/
                         }
                         if (not_fit) {
                                 ship_not_fit(length, number);
                         } else { /*Legaler input*/
                                 for (i = 0; i < length; ++i) {
-                                        spieler1[input[0] - 'A'][input[1] - '0' + i].content = ship;
-                                        spieler1[input[0] - 'A'][input[1] - '0' + i].length = length;
-                                        spieler1[input[0] - 'A'][input[1] - '0' + i].number = number;
+                                        spieler1[column - 'A'][row + i].content = ship;
+                                        spieler1[column - 'A'][row + i].length = length;
+                                        spieler1[column - 'A'][row + i].number = number;
                                         if (i == 0) {
-                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = top;
+                                                spieler1[column - 'A'][row + i].position = top;
                                         } else if (i == length - 1) {
-                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = bottom;
+                                                spieler1[column - 'A'][row + i].position = bottom;
                                         } else {
-                                                spieler1[input[0] - 'A'][input[1] - '0' + i].position = vertical;
+                                                spieler1[column - 'A'][row + i].position = vertical;
                                         }
                                 }
                         }
@@ -162,4 +239,11 @@ char get_orientation(int length)
                 }
         }
         return 'h'; /*Will never be reached, but causes warning if missing*/
+}
+
+int flush()
+{
+        char c = getchar();
+        while (c != EOF && c != '\n') c = getchar();
+        return c == EOF;
 }
