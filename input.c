@@ -67,7 +67,7 @@ int get_field(int *row, char *column)
         
         /*Überschüssigen Input löschen*/
         if (input[0] != '\n' && input[1] != '\n' && input[2] != '\n') {
-                if (flush()) {
+                if (flush()) { /*EOF*/
                         return -1;
                 }
         }
@@ -114,7 +114,7 @@ int get_field(int *row, char *column)
         return 0;
 }
 
-void set_start_values()
+int set_start_values()
 {       
         int i;
         int j;
@@ -132,31 +132,52 @@ void set_start_values()
                 }
         }
         print();
-        get_start(5, 1);
+        if (get_start(5, 1)) {
+                return -1;
+        }
         print();
-        get_start(4, 2);
+        if (get_start(4, 2)) {
+                return -1;
+        }
         print();
-        get_start(4, 3);
+        if (get_start(4, 3)) {
+                return -1;
+        }
         print();
-        get_start(3, 4);
+        if (get_start(3, 4)) {
+                return -1;
+        }
         print();
-        get_start(3, 5);
+        if (get_start(3, 5)) {
+                return -1;
+        }
         print();
-        get_start(2, 6);
+        if (get_start(2, 6)) {
+                return -1;
+        }
         print();
-        get_start(2, 7);
+        if (get_start(2, 7)) {
+                return -1;
+        }
         print();
+        return 0;
 }
 
-void get_start(int length, int number)
+int get_start(int length, int number)
 {
         int row;
         char column;
         char orientation;
         printf("Please enter the starting field of ship with length '%i': ", length);
-        get_field(&row, &column);
+        
+        if (get_field(&row, &column)) {
+                return -1;
+        }
         
         orientation = get_orientation(length);
+        if (orientation < 0) {
+                return orientation;
+        }
         if (orientation == 'H') {
                 if (((column - 'A') + length) <= width) {
                         int i;
@@ -212,12 +233,16 @@ void get_start(int length, int number)
                         ship_not_fit(length, number);
                 }
         }
+        return 0;
 }
 
-void ship_not_fit(int length, int number)
+int ship_not_fit(int length, int number)
 {
         printf("%s", "The ship doesn't fit like this!\n\a");
-        get_start(length, number);
+        if (get_start(length, number)) {
+                return -1;
+        }
+        return 0;
 }
 
 char get_orientation(int length)
@@ -228,7 +253,9 @@ char get_orientation(int length)
                 printf("Please enter the orientation of ship with length '%i'\n 'h' for horizontal or 'v' for vertical: ", length);
                 input[0] = getchar();
                 if (input[0] != '\n') {
-                        while ((getchar()) != '\n');
+                        if (flush()) {
+                                return -1;
+                        }
                 }
                 input[0] = toupper(input[0]);
                 end = (input[0] == 'H') || (input[0] == 'V');

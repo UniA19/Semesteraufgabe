@@ -7,10 +7,10 @@
 #include <ctype.h>
 
 /*Methode zum setzen der Startpositionen*/
-void set_start_values();
-void get_start();
+int set_start_values();
+int get_start();
 char get_orientation();
-void ship_not_fit();
+int ship_not_fit();
 
 /*Allgemeine Methoden*/
 void get_size();

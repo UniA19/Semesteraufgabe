@@ -8,7 +8,7 @@
 
 
 /*Methoden für den Spielablauf*/
-void shoot();
+int shoot();
 int get_status();
 void free_all();
 
@@ -35,9 +35,7 @@ int main(void)
         
         set_start_values();
         
-        do {
-                shoot();
-        } while (get_status());
+        while (!shoot());
         
         printf("\n----------------------------------------\n");
         printf("The game is over! Someone won!\n");
@@ -49,7 +47,7 @@ int main(void)
 
 void free_all()
 {
-        
+        int i;
         for (i = 0; i < width; ++i) {
                 free(spieler1[i]);
                 free(spieler2[i]);
@@ -58,43 +56,52 @@ void free_all()
         free(spieler2);
 }
 
-void shoot()
+int shoot()
 {
         int row;
         char column;
         printf("Choose a field to shoot at: ");
-        get_field(&row, &column);
+        if (get_field(&row, &column)) {
+                return -1;
+        }
         
         switch (spieler2[column - 'A'][row].content) {
                 case water:
                         printf("\n%s\n", "Oh no, you missed!");
                         spieler2[column - 'A'][row].content = hit_water;
                         print();
+                        return 0;
                         break;
                 case hit_water:
                         printf("%s\n", "You have already tried to kill that water!");
                         shoot();
+                        return 0;
                         break;
                 case ship:
                         printf("%s\n", "Yeah, you have hit a ship!");
                         spieler2[column - 'A'][row].content = hit_ship;
                         if (!get_status()) {
                                 print();
-                                return;
+                                return 1;
                         }
                         print();
                         shoot();
+                        return 0;
                         break;
                 case hit_ship:
                         printf("%s\n", "You have already destroyed this Part of the ship!");
                         shoot();
+                        return 0;
                         break;
                 case destroyed_ship:
                         printf("%s\n", "You have already destroyed this ship!");
                         shoot();
+                        return 0;
                         break;
                 default:
-                        printf("%s\n", "Oh, it seems that aliens have claimed this field. I think this is an ERROR"); /*Should never be reached!*/
+                        printf("%s\n", "Oh, it seems that aliens have claimed this field. I think this is an ERROR\n"); /*Should never be reached!*/
+                        printf("content: %i, column: (%c|%i), row: %i", spieler2[column - 'A'][row].content, column, column, row);
+                        return -2;
         }
 }
 
