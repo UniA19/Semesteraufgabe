@@ -10,7 +10,7 @@
 /*Methoden für den Spielablauf*/
 void shoot();
 int get_status();
-
+void free_all();
 
 /*---------------------------------------- Methoden ----------------------------------------*/
 int main(void)
@@ -22,22 +22,17 @@ int main(void)
         get_size();
         
         spieler1 = (struct Field **)malloc(width * sizeof(struct Field *));
+        spieler2 = (struct Field **)malloc(width * sizeof(struct Field *));
         for (i = 0; i < width; ++i) {
                 spieler1[i] = (struct Field *) malloc(height * sizeof(struct Field));
-                if (spieler1[i] == NULL) {
+                spieler2[i] = (struct Field *) malloc(height * sizeof(struct Field));
+                if (spieler1[i] == NULL || spieler2[i] == NULL) {
                         printf("FATAL ERROR: could not allocate memory");
+                        free_all();
                         return -1;
                 }
         }
         
-        spieler2 = (struct Field **)malloc(width * sizeof(struct Field *));
-        for (i = 0; i < width; ++i) {
-                spieler2[i] = (struct Field *) malloc(height * sizeof(struct Field));
-                if (spieler2[i] == NULL) {
-                        printf("FATAL ERROR: could not allocate memory");
-                        return -1;
-                }
-        }
         set_start_values();
         
         do {
@@ -48,7 +43,19 @@ int main(void)
         printf("The game is over! Someone won!\n");
         printf("----------------------------------------\n\n");
         
+        free_all();
         return 0;
+}
+
+void free_all()
+{
+        
+        for (i = 0; i < width; ++i) {
+                free(spieler1[i]);
+                free(spieler2[i]);
+        }
+        free(spieler1);
+        free(spieler2);
 }
 
 void shoot()
