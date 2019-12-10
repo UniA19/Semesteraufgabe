@@ -16,11 +16,11 @@ void free_all();
 int main(void)
 {
         int i;
-        
+
         width = WIDTH_DEFAULT;
         height = HEIGHT_DEFAULT;
         get_size();
-        
+
         spieler1 = (struct Field **)malloc(width * sizeof(struct Field *));
         spieler2 = (struct Field **)malloc(width * sizeof(struct Field *));
         for (i = 0; i < width; ++i) {
@@ -32,15 +32,15 @@ int main(void)
                         return -1;
                 }
         }
-        
+
         set_start_values();
-        
+
         while (!shoot());
-        
+
         printf("\n----------------------------------------\n");
         printf("The game is over! Someone won!\n");
         printf("----------------------------------------\n\n");
-        
+
         free_all();
         return 0;
 }
@@ -64,7 +64,7 @@ int shoot()
         if (get_field(&row, &column)) {
                 return -1;
         }
-        
+
         switch (spieler2[column - 'A'][row].content) {
                 case water:
                         printf("\n%s\n", "Oh no, you missed!");
@@ -103,6 +103,11 @@ int shoot()
                         printf("content: %i, column: (%c|%i), row: %i", spieler2[column - 'A'][row].content, column, column, row);
                         return -2;
         }
+}
+
+int shoot_ki()
+{
+        return 0;
 }
 
 int get_status() /*Return 0 to end game*/
@@ -148,7 +153,7 @@ int get_status() /*Return 0 to end game*/
         return status;
 }
 
-/* 
+/*
 Schiffe:
 1x 5
 2x 4
