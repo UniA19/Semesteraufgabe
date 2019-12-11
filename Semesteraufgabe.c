@@ -10,6 +10,8 @@
 /*Methoden für den Spielablauf*/
 int shoot();
 int get_status();
+int get_status1();
+int get_status2();
 void free_all();
 
 /*---------------------------------------- Methoden ----------------------------------------*/
