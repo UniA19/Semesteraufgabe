@@ -110,7 +110,12 @@ int shoot_ki()
         return 0;
 }
 
-int get_status() /*Return 0 to end game*/
+int get_status()
+{
+        return get_status1() * get_status2();
+}
+
+int get_status1() /*Return 0 to end game*/
 {
         int status = 0;
         int i;
@@ -145,6 +150,49 @@ int get_status() /*Return 0 to end game*/
                                                         spieler1[i][j+k].content = destroyed_ship;
                                                 }
                                                 printf("You have destroyed a ship with length %i!", field.length);
+                                        }
+                                }
+                        }
+                }
+        }
+        return status;
+}
+
+int get_status2() /*Return 0 to end game*/
+{
+        int status = 0;
+        int i;
+        for (i = 0; i < width; ++i) {
+                int j;
+                for (j = 0; j < height; ++j) {
+                        struct Field field = spieler2[i][j];
+                        status += field.content == ship;
+                        if (field.position == left) {
+                                if (field.content == hit_ship) {
+                                        int k;
+                                        int ship_ok = 0; /*Anzahl an noch nicht getroffenen Teilen dieses Schiffes*/
+                                        for (k = 0; k < field.length; ++k) {
+                                                ship_ok += spieler2[i+k][j].content == ship;
+                                        }
+                                        if (!ship_ok) { /*Schiff versenkt*/
+                                                for (k = 0; k < field.length; ++k) {
+                                                        spieler2[i+k][j].content = destroyed_ship;
+                                                }
+                                                printf("One of your ships with length %i was destroyed!", field.length);
+                                        }
+                                }
+                        } else if (field.position == top) {
+                                if (field.content == hit_ship) {
+                                        int k;
+                                        int ship_ok = 0; /*Anzahl an noch nicht getroffenen Teilen dieses Schiffes*/
+                                        for (k = 0; k < field.length; ++k) {
+                                                ship_ok += spieler2[i][j+k].content == ship;
+                                        }
+                                        if (!ship_ok) { /*Schiff versenkt*/
+                                                for (k = 0; k < field.length; ++k) {
+                                                        spieler2[i][j+k].content = destroyed_ship;
+                                                }
+                                                printf("One of your ships with length %i was destroyed!", field.length);
                                         }
                                 }
                         }
