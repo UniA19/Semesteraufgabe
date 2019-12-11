@@ -21,7 +21,9 @@ int main(void)
 
         width = WIDTH_DEFAULT;
         height = HEIGHT_DEFAULT;
-        get_size();
+        if (get_size()) {
+                return -1;
+        }
 
         spieler1 = (struct Field **)malloc(width * sizeof(struct Field *));
         spieler2 = (struct Field **)malloc(width * sizeof(struct Field *));

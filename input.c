@@ -1,6 +1,6 @@
 #include "input.h"
 
-void get_size() 
+int get_size() 
 {
         int right = 0;
         int temp = 0;
@@ -10,16 +10,22 @@ void get_size()
                 if (temp < WIDTH_MIN) {
                         right = 0;
                         printf("The width must be between %i and %i!\nPlease try again: ", WIDTH_MIN, WIDTH_MAX);
+                        if (flush()) {
+                                return -1;
+                        }
                 } else if (WIDTH_MIN <= temp && temp <= WIDTH_MAX) {
                         right = 1;
                 } else if (WIDTH_MAX < temp) {
                         right = 0;
                         printf("The width must be between %i and %i!\nPlease try again: ", WIDTH_MIN, WIDTH_MAX);
+                        if (flush()) {
+                                return -1;
+                        }
                 }
         }
         width = temp;
         if (flush()) {
-                return;
+                return -1;
         }
         
         temp = 0;
@@ -39,8 +45,9 @@ void get_size()
         }
         height = temp;
         if (flush()) {
-                return;
+                return -1;
         }
+        return 0;
 }
 
 int get_field(int *row, char *column)
