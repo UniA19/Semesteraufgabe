@@ -27,6 +27,16 @@ int main(void)
 
         spieler1 = (struct Field **)malloc(width * sizeof(struct Field *));
         spieler2 = (struct Field **)malloc(width * sizeof(struct Field *));
+        if (spieler1 == NULL) {
+                printf("FATAL ERROR: could not allocate memory");
+                free_all();
+                return -1;
+        }
+        if (spieler2 == NULL) {
+                printf("FATAL ERROR: could not allocate memory");
+                free(spieler1);
+                return -1;
+        }
         for (i = 0; i < width; ++i) {
                 spieler1[i] = (struct Field *) malloc(height * sizeof(struct Field));
                 spieler2[i] = (struct Field *) malloc(height * sizeof(struct Field));
@@ -53,8 +63,12 @@ void free_all()
 {
         int i;
         for (i = 0; i < width; ++i) {
-                free(spieler1[i]);
-                free(spieler2[i]);
+                if (spieler1[i] != NULL) {
+                        free(spieler1[i]);
+                }
+                if (spieler2[i] != NULL) {
+                        free(spieler2[i]);
+                }
         }
         free(spieler1);
         free(spieler2);
