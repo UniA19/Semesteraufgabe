@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include "printing.h"
 #include "global.h"
 #include "input.h"
@@ -22,6 +23,8 @@ int main(void)
 {
         int i;
 
+        srand(time(NULL));
+        
         width = WIDTH_DEFAULT;
         height = HEIGHT_DEFAULT;
         if (get_size()) {
@@ -150,7 +153,7 @@ int shoot_ki()
 
         switch (spieler1[column - 'A'][row].content) {
                 case water:
-                        printf("\n%s\n", "Oh no, Bot missed!");
+                        printf("\n%s\n", "Yeah, Bot missed!");
                         spieler1[column - 'A'][row].content = hit_water;
                         break;
                 case hit_water:
@@ -158,7 +161,7 @@ int shoot_ki()
                         done = 0;
                         break;
                 case ship:
-                        printf("%s\n", "Yeah, bot has hit a ship!");
+                        printf("%s\n", "Oh no, bot has hit a ship!");
                         spieler1[column - 'A'][row].content = hit_ship;
                         if (!get_status()) {
                                 print();
@@ -180,7 +183,7 @@ int shoot_ki()
                                [column - 'A'][row].content, column, column, row);
                         return -2;
         }
-}while( hit==1 | done == 0);
+}while( hit == 1 || done == 0);
         print();
         return 0;
 }

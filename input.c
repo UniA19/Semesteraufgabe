@@ -4,6 +4,7 @@ int get_size()
 {
         int right = 0;
         int temp = 0;
+        int valid = 0;
         printf("Please enter the width of the field (between %i and %i): ", WIDTH_MIN, WIDTH_MAX);
         while (!right) {
                 scanf("%i", &temp);
@@ -44,7 +45,6 @@ int get_size()
     
         /* Get difficulty level*/
         printf("Please enter the desired difficulty level! (1 or 2): ");
-        int valid = 0;
         temp = 0;
         while(!valid)
         {

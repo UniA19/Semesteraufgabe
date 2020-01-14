@@ -1,9 +1,12 @@
+#include <time.h>
+#include <stdlib.h>
 #include "bot.h"
 #include "global.h"
 
 int GetRandInt(int upper, int lower)
 {
-        int res = (rand() % (upper - lower +1)) + lower;
+        int res;
+        res = (rand() % (upper - lower +1)) + lower;
         return res;
 }
 

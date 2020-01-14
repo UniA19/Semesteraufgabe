@@ -27,4 +27,6 @@ int width;
 struct Field **spieler1;
 struct Field **spieler2;
 
+int difficulty;
+
 #endif
