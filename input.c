@@ -1,6 +1,6 @@
 #include "input.h"
 
-void get_size() 
+int get_size() 
 {
         int right = 0;
         int temp = 0;
@@ -19,7 +19,7 @@ void get_size()
         }
         width = temp;
         if (flush()) {
-                return;
+                return -1;
         }
         
         temp = 0;
@@ -39,27 +39,28 @@ void get_size()
         }
         height = temp;
         if (flush()) {
-                return;
+                return -1;
         }
     
-    /* Get difficulty level*/
-    printf("Please enter the desired difficulty level! (1 or 2): ");
-    int valid = 0;
-    temp = 0;
-    while(!valid)
-    {
-        scanf("%i", &temp);
-        if(temp == 1)
+        /* Get difficulty level*/
+        printf("Please enter the desired difficulty level! (1 or 2): ");
+        int valid = 0;
+        temp = 0;
+        while(!valid)
         {
-            difficulty = 1;
-            valid = 1;
-        } else if (temp == 2) {
-            difficulty = 2;
-            valid = 1;
-        } else {
-            printf("Difficulty level musst be 1 or 2! Please try again: ");
+                scanf("%i", &temp);
+                if(temp == 1)
+                {
+                        difficulty = 1;
+                        valid = 1;
+                } else if (temp == 2) {
+                        difficulty = 2;
+                        valid = 1;
+                } else {
+                        printf("Difficulty level musst be 1 or 2! Please try again: ");
+                }
         }
-    }
+        return 0;
 }
 
 int get_field(int *row, char *column)
@@ -180,7 +181,7 @@ int set_start_values()
         }
         print();
     
-
+    
         return 0;
 }
 
